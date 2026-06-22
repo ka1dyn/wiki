@@ -2,7 +2,8 @@ import rehypePrism from "rehype-prism-plus";
 import rehypeSlug from "rehype-slug";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
-import { DemoEmbed, rehypeDemo } from "./markdownDemo";
+import { DemoEmbed } from "./DemoEmbed";
+import { rehypeDemo } from "./markdownDemo";
 
 export const mdCustomStyle = {
   h1: ({ ...props }) => {
