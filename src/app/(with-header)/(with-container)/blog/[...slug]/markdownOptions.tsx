@@ -2,6 +2,7 @@ import rehypePrism from "rehype-prism-plus";
 import rehypeSlug from "rehype-slug";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
+import { DemoEmbed, rehypeDemo } from "./markdownDemo";
 
 export const mdCustomStyle = {
   h1: ({ ...props }) => {
@@ -111,18 +112,23 @@ export const mdCustomStyle = {
   a: ({ ...props }) => (
     <a
       className="underline underline-offset-4 text-primary mr-2
-      after:content-['↗'] 
+      after:content-['↗']
       after:text-[0.8em]"
       target="_blank"
       {...props}
     />
   ),
+  // ```demo 펜스 마커 → same-origin iframe (markdownDemo.tsx 참고)
+  "demo-embed": DemoEmbed,
 };
 
 export const mdCustomOption = {
   mdxOptions: {
     remarkPlugins: [remarkGfm, remarkBreaks],
     rehypePlugins: [
+      // rehypeDemo는 rehypePrism보다 먼저 — language-demo 블록을 먼저 치환해
+      // 미등록 언어 "demo"를 prism이 만나지 않게 한다.
+      rehypeDemo,
       rehypeSlug,
       [rehypePrism, { showLineNumbers: true }],
     ] as any,
