@@ -58,7 +58,9 @@ export function DemoEmbed({
         title={`demo: ${id}`}
         loading="lazy"
         className="w-full rounded-md border border-sidebar-border bg-white"
-        style={{ height: `${h}px` }}
+        // box-sizing: content-box → height가 테두리에 먹히지 않고 콘텐츠 영역과
+        // 정확히 일치(border-box면 테두리만큼 줄어 미세 내부 스크롤 발생).
+        style={{ height: `${h}px`, boxSizing: "content-box" }}
         data-demo-id={id}
       />
     </div>

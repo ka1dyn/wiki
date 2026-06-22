@@ -71,8 +71,10 @@
 
       // ── 자동높이: 콘텐츠 높이를 부모로 전송 (postMessage, same/cross 호환) ──
       // 다른 데모도 이 스니펫을 복사해 쓰면 됨. 부모가 없으면(standalone) 무해.
+      // ⚠️ documentElement.scrollHeight는 콘텐츠가 iframe 뷰포트보다 작으면
+      //    뷰포트 높이로 클램핑된다 → body의 실제 박스 높이를 재야 정확.
       function postHeight() {
-        const h = document.documentElement.scrollHeight;
+        const h = Math.ceil(document.body.getBoundingClientRect().height);
         parent.postMessage({ type: "demo:height", height: h }, "*");
       }
       window.addEventListener("load", postHeight);
