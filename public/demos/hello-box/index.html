@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>hello-box demo</title>
     <style>
-      /* 자기완결 정적 데모 (외부 의존 0, 상대경로) — 1단계 저장소 검증용 */
+      /* 자기완결 정적 데모 (외부 의존 0, 상대경로). 콘텐츠 높이로 자라며
+         실제 높이를 부모로 전송 → iframe이 콘텐츠에 맞춰진다. */
       :root {
         color-scheme: light;
       }
@@ -14,9 +15,11 @@
       }
       body {
         margin: 0;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
+        padding: 40px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
         font-family: system-ui, sans-serif;
         background: #f8fafc;
       }
@@ -33,6 +36,7 @@
         font-weight: 600;
         cursor: pointer;
         transition: transform 0.15s ease;
+        user-select: none;
       }
       .box:active {
         transform: scale(0.92);
@@ -47,17 +51,15 @@
         }
       }
       .label {
-        margin-top: 24px;
         color: #475569;
         font-size: 14px;
       }
     </style>
   </head>
   <body>
-    <div>
-      <div class="box" id="box" role="button" tabindex="0">click</div>
-      <div class="label" id="label">clicks: 0</div>
-    </div>
+    <div class="box" id="box" role="button" tabindex="0">click</div>
+    <div class="label" id="label">clicks: 0</div>
+
     <script>
       const box = document.getElementById("box");
       const label = document.getElementById("label");
@@ -66,6 +68,17 @@
         n += 1;
         label.textContent = "clicks: " + n;
       });
+
+      // ── 자동높이: 콘텐츠 높이를 부모로 전송 (postMessage, same/cross 호환) ──
+      // 다른 데모도 이 스니펫을 복사해 쓰면 됨. 부모가 없으면(standalone) 무해.
+      function postHeight() {
+        const h = document.documentElement.scrollHeight;
+        parent.postMessage({ type: "demo:height", height: h }, "*");
+      }
+      window.addEventListener("load", postHeight);
+      if (window.ResizeObserver) {
+        new ResizeObserver(postHeight).observe(document.body);
+      }
     </script>
   </body>
 </html>
