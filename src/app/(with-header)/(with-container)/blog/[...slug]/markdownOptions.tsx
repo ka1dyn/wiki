@@ -3,6 +3,7 @@ import rehypeSlug from "rehype-slug";
 import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import { DemoEmbed } from "./DemoEmbed";
+import { DemoCard } from "./DemoCard";
 import { rehypeDemo } from "./markdownDemo";
 
 export const mdCustomStyle = {
@@ -121,6 +122,8 @@ export const mdCustomStyle = {
   ),
   // ```demo 펜스 마커 → same-origin iframe (markdownDemo.tsx 참고)
   "demo-embed": DemoEmbed,
+  // ```demo-card 펜스 마커 → 런타임/서버 데모 카드
+  "demo-card": DemoCard,
 };
 
 export const mdCustomOption = {

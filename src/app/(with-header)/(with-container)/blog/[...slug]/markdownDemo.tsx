@@ -1,16 +1,28 @@
 import { visit } from "unist-util-visit";
 
-// ─── 데모 마커 → <demo-embed> 치환 (rehype 플러그인) ─────────────────
-// 글 본문의 ```demo 펜스 블록을 <demo-embed> 엘리먼트로 바꾼다. format: "md"
-// 유지(MDX 전환 없음 → 기존 글 영향 0). 글과 데모는 id로만 연결된다.
+// ─── 데모 마커 → 엘리먼트 치환 (rehype 플러그인) ─────────────────────
+// 글 본문의 펜스 마커를 커스텀 엘리먼트로 바꾼다. format: "md" 유지
+// (MDX 전환 없음 → 기존 글 영향 0). rehypePrism보다 먼저 실행해 미등록
+// 언어(demo/demo-card)를 prism이 만나지 않게 한다.
 //
-//   ```demo
+//   ```demo            → <demo-embed>  : 라이브 same-origin iframe (DemoEmbed)
 //   id: hello-box
 //   height: 420
 //   ```
 //
-// rehypePrism보다 먼저 실행해 미등록 언어 "demo"를 prism이 만나지 않게 한다.
-// 실제 렌더(iframe)는 components 맵의 "demo-embed" → DemoEmbed(client)가 담당.
+//   ```demo-card       → <demo-card>   : 런타임/서버 데모 카드 (DemoCard)
+//   title: ...
+//   tech: Next.js
+//   repo: https://...
+//   run: npx degit ...
+//   ```
+//
+// 실제 렌더는 components 맵의 "demo-embed"/"demo-card"가 담당.
+
+const FENCES: Record<string, string> = {
+  demo: "demo-embed",
+  "demo-card": "demo-card",
+};
 
 type HastNode = {
   type: string;
@@ -26,19 +38,22 @@ function getText(node: HastNode): string {
   return "";
 }
 
-function hasDemoClass(code: HastNode): boolean {
+// code 엘리먼트의 펜스 언어("demo"/"demo-card"/…)를 반환.
+function fenceLang(code: HastNode): string | null {
   const cls = code.properties?.className;
-  return Array.isArray(cls) && (cls as unknown[]).includes("language-demo");
+  if (!Array.isArray(cls)) return null;
+  const hit = (cls as unknown[]).find(
+    (c) => typeof c === "string" && c.startsWith("language-"),
+  ) as string | undefined;
+  return hit ? hit.slice("language-".length) : null;
 }
 
-function parseDemoBody(raw: string): { id?: string; height?: string } {
-  const out: { id?: string; height?: string } = {};
+// 마커 본문을 범용 key:value로 파싱(값에 URL의 `https://`도 그대로 포함).
+function parseBody(raw: string): Record<string, string> {
+  const out: Record<string, string> = {};
   for (const line of raw.split("\n")) {
-    const m = line.match(/^\s*([a-zA-Z]+)\s*:\s*(.+?)\s*$/);
-    if (!m) continue;
-    const [, key, val] = m;
-    if (key === "id") out.id = val;
-    else if (key === "height") out.height = val;
+    const m = line.match(/^\s*([a-zA-Z][\w-]*)\s*:\s*(.+?)\s*$/);
+    if (m) out[m[1]] = m[2];
   }
   return out;
 }
@@ -53,13 +68,16 @@ export function rehypeDemo() {
         const code = node.children?.find(
           (c) => c.type === "element" && c.tagName === "code",
         );
-        if (!code || !hasDemoClass(code)) return;
+        if (!code) return;
 
-        const { id, height } = parseDemoBody(getText(code));
+        const lang = fenceLang(code);
+        const tagName = lang ? FENCES[lang] : undefined;
+        if (!tagName) return;
+
         parent.children![index] = {
           type: "element",
-          tagName: "demo-embed",
-          properties: { id, height },
+          tagName,
+          properties: parseBody(getText(code)),
           children: [],
         };
       },
