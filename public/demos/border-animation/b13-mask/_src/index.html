@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>기법 13 · mask-composite 그라데이션 테두리</title>
+    <style>
+      * { box-sizing: border-box; }
+      :root { color-scheme: dark; }
+      body { margin: 0; padding: 48px; display: flex; justify-content: center; background: #18181b; font-family: system-ui, sans-serif; }
+      @property --angle { syntax: '<angle>'; initial-value: 0deg; inherits: false; }
+      .box { position: relative; border-radius: 12px; width: 160px; height: 90px; display: grid; place-items: center; }
+      .box::before {
+        content: ''; position: absolute; inset: 0;
+        border-radius: inherit; padding: 4px;
+        background: conic-gradient(from var(--angle), #ff5d5d, #5d8bff, #5dffa1, #ff5d5d);
+        /* 바깥 전체 - 안쪽(content-box) = 테두리 링 */
+        mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        mask-composite: exclude;
+        -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+        -webkit-mask-composite: xor;
+        animation: spin 4s linear infinite;
+      }
+      .box > .content { position: relative; z-index: 1; color: #e4e4e7; font-size: 12px; }
+      @keyframes spin { to { --angle: 360deg; } }
+    </style>
+  </head>
+  <body>
+    <div class="box"><span class="content">둥근 + 회전</span></div>
+    <script>
+      function postHeight() { const h = Math.ceil(document.body.getBoundingClientRect().height); parent.postMessage({ type: "demo:height", height: h }, "*"); }
+      addEventListener("load", postHeight); if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.body);
+    </script>
+  </body>
+</html>

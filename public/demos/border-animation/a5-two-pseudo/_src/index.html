@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>기법 5 · 두 pseudo 모서리 그리기</title>
+    <style>
+      * { box-sizing: border-box; }
+      :root { color-scheme: dark; }
+      body { margin: 0; padding: 48px; display: flex; justify-content: center; background: #18181b; font-family: system-ui, sans-serif; }
+      .stage { display: flex; flex-direction: column; align-items: center; gap: 14px; }
+      .box { position: relative; width: 160px; height: 90px; border-radius: 4px; background: #27272a; display: grid; place-items: center; color: #e4e4e7; font-size: 13px; }
+      .box::before, .box::after { content: ''; position: absolute; width: 0; height: 0; }
+      .box::before {
+        top: 0; left: 0;
+        border-top: 3px solid #5d8bff; border-left: 3px solid #5d8bff;
+        transition: width .25s ease, height .25s ease .25s;
+      }
+      .box::after {
+        bottom: 0; right: 0;
+        border-bottom: 3px solid #5d8bff; border-right: 3px solid #5d8bff;
+        transition: width .25s ease, height .25s ease .25s;
+      }
+      .box:hover::before, .box:hover::after { width: 100%; height: 100%; }
+      .label { color: #71717a; font-size: 12px; text-align: center; }
+    </style>
+  </head>
+  <body>
+    <div class="stage">
+      <div class="box">hover</div>
+      <div class="label">hover → 모서리부터 변 → 변 순으로 그려짐</div>
+    </div>
+    <script>
+      function postHeight() { const h = Math.ceil(document.body.getBoundingClientRect().height); parent.postMessage({ type: "demo:height", height: h }, "*"); }
+      addEventListener("load", postHeight); if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.body);
+    </script>
+  </body>
+</html>
