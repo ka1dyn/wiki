@@ -7,23 +7,31 @@
     <style>
       * { box-sizing: border-box; }
       :root { color-scheme: dark; }
-      body { margin: 0; padding: 48px; display: flex; justify-content: center; background: #18181b; font-family: system-ui, sans-serif; }
-      .stage { display: flex; flex-direction: column; align-items: center; gap: 14px; }
-      .row { display: flex; gap: 14px; }
-      /* ❌ border-width를 직접 움직이면 요소가 커지며 이웃이 밀린다(리플로우) */
-      .box { width: 92px; height: 70px; border: 2px solid #5d8bff; border-radius: 10px; background: #27272a; display: grid; place-items: center; color: #e4e4e7; font-size: 12px; transition: border-width .3s; }
-      .box.first:hover { border-width: 12px; }
-      .label { color: #71717a; font-size: 12px; text-align: center; }
+      /* 왼쪽 고정 → 첫 박스가 커질 때 이웃이 오른쪽으로 밀리는 게 보이게 */
+      body { margin: 0; padding: 48px; display: flex; justify-content: flex-start; background: #18181b; font-family: system-ui, sans-serif; }
+      .stage { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; }
+      /* 고정 높이 슬롯 — A가 세로로 커져도 데모 전체 높이는 일정(아래 글 출렁임 방지).
+         가로 밀림(reflow 증상)은 그대로 보인다. */
+      .row { display: flex; gap: 12px; align-items: center; height: 96px; }
+      .box {
+        box-sizing: content-box; /* ★ 핵심: border가 요소 크기에 더해진다(문제 재현) */
+        width: 80px; height: 56px; border: 2px solid #3f3f46; border-radius: 10px;
+        background: #27272a; display: grid; place-items: center; color: #e4e4e7; font-size: 12px;
+      }
+      /* ❌ border-width를 애니메이션 → 매 프레임 레이아웃 재계산(리플로우), 이웃이 밀림 */
+      .box.first { border-color: #5d8bff; animation: grow 1.6s ease-in-out infinite alternate; }
+      @keyframes grow { from { border-width: 2px; } to { border-width: 16px; } }
+      .label { color: #71717a; font-size: 12px; }
     </style>
   </head>
   <body>
     <div class="stage">
       <div class="row">
-        <div class="box first">hover</div>
+        <div class="box first">A</div>
         <div class="box">B</div>
         <div class="box">C</div>
       </div>
-      <div class="label">첫 박스에 hover → 이웃 박스가 밀린다 (리플로우)</div>
+      <div class="label">A의 테두리가 두꺼워질 때마다 B·C가 오른쪽으로 밀린다 (= 리플로우)</div>
     </div>
     <script>
       function postHeight() { const h = Math.ceil(document.body.getBoundingClientRect().height); parent.postMessage({ type: "demo:height", height: h }, "*"); }
