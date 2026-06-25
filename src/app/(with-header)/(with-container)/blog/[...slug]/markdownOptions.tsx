@@ -120,6 +120,25 @@ export const mdCustomStyle = {
       {...props}
     />
   ),
+  // GFM 표 — 넓은 표는 가로 스크롤로 감싸 본문이 안 깨지게
+  table: ({ ...props }) => (
+    <div className="my-6 overflow-x-auto">
+      <table className="w-full border-collapse text-sm" {...props} />
+    </div>
+  ),
+  thead: ({ ...props }) => <thead className="bg-accent/30" {...props} />,
+  th: ({ ...props }) => (
+    <th
+      className="border border-sidebar-border px-3 py-2 text-left font-semibold text-foreground"
+      {...props}
+    />
+  ),
+  td: ({ ...props }) => (
+    <td
+      className="border border-sidebar-border px-3 py-2 align-top text-foreground/90"
+      {...props}
+    />
+  ),
   // ```demo 펜스 마커 → same-origin iframe (markdownDemo.tsx 참고)
   "demo-embed": DemoEmbed,
   // ```demo-card 펜스 마커 → 런타임/서버 데모 카드
