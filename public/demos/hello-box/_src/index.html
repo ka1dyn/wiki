@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>hello-box demo</title>
+    <style>
+      /* 자기완결 정적 데모 (외부 의존 0, 상대경로). 콘텐츠 높이로 자라며
+         실제 높이를 부모로 전송 → iframe이 콘텐츠에 맞춰진다. */
+      :root {
+        color-scheme: light;
+      }
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        padding: 40px 16px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 24px;
+        font-family: system-ui, sans-serif;
+        background: #f8fafc;
+      }
+      .box {
+        width: 140px;
+        height: 140px;
+        border-radius: 20px;
+        background: linear-gradient(135deg, #6366f1, #ec4899);
+        box-shadow: 0 12px 40px rgba(99, 102, 241, 0.45);
+        animation: float 2.4s ease-in-out infinite;
+        display: grid;
+        place-items: center;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        transition: transform 0.15s ease;
+        user-select: none;
+      }
+      .box:active {
+        transform: scale(0.92);
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0) rotate(0deg);
+        }
+        50% {
+          transform: translateY(-18px) rotate(6deg);
+        }
+      }
+      .label {
+        color: #475569;
+        font-size: 14px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box" id="box" role="button" tabindex="0">click</div>
+    <div class="label" id="label">clicks: 0</div>
+
+    <script>
+      const box = document.getElementById("box");
+      const label = document.getElementById("label");
+      let n = 0;
+      box.addEventListener("click", () => {
+        n += 1;
+        label.textContent = "clicks: " + n;
+      });
+
+      // ── 자동높이: 콘텐츠 높이를 부모로 전송 (postMessage, same/cross 호환) ──
+      // 다른 데모도 이 스니펫을 복사해 쓰면 됨. 부모가 없으면(standalone) 무해.
+      // ⚠️ documentElement.scrollHeight는 콘텐츠가 iframe 뷰포트보다 작으면
+      //    뷰포트 높이로 클램핑된다 → body의 실제 박스 높이를 재야 정확.
+      function postHeight() {
+        const h = Math.ceil(document.body.getBoundingClientRect().height);
+        parent.postMessage({ type: "demo:height", height: h }, "*");
+      }
+      window.addEventListener("load", postHeight);
+      if (window.ResizeObserver) {
+        new ResizeObserver(postHeight).observe(document.body);
+      }
+    </script>
+  </body>
+</html>
