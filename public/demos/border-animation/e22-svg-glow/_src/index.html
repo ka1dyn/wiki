@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>기법 22 · SVG glow filter + 그리기</title>
+    <style>
+      * { box-sizing: border-box; }
+      :root { color-scheme: dark; }
+      body { margin: 0; padding: 48px; display: flex; justify-content: center; background: #18181b; font-family: system-ui, sans-serif; }
+      svg { display: block; }
+    </style>
+  </head>
+  <body>
+    <svg viewBox="0 0 150 80" width="200" height="107">
+      <defs>
+        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="2.5" result="b" />
+          <feMerge><feMergeNode in="b" /><feMergeNode in="SourceGraphic" /></feMerge>
+        </filter>
+      </defs>
+      <rect x="3" y="3" width="144" height="74" rx="12" fill="none"
+            stroke="#5dffa1" stroke-width="3" filter="url(#glow)"
+            pathLength="100" stroke-dasharray="100" stroke-dashoffset="100">
+        <animate attributeName="stroke-dashoffset" from="100" to="0" dur="2.4s" repeatCount="indefinite" />
+      </rect>
+    </svg>
+    <script>
+      function postHeight() { const h = Math.ceil(document.body.getBoundingClientRect().height); parent.postMessage({ type: "demo:height", height: h }, "*"); }
+      addEventListener("load", postHeight); if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.body);
+    </script>
+  </body>
+</html>

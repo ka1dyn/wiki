@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>기법 10 · ::before 회전 폴백</title>
+    <style>
+      * { box-sizing: border-box; }
+      :root { color-scheme: dark; }
+      body { margin: 0; padding: 48px; display: flex; justify-content: center; background: #18181b; font-family: system-ui, sans-serif; }
+      /* @property 없이 회전: conic을 통째로 rotate, 가운데를 단색으로 덮고 overflow로 자름 */
+      .box { position: relative; overflow: hidden; border-radius: 12px; width: 160px; height: 90px; display: grid; place-items: center; }
+      .box::before {
+        content: ''; position: absolute; inset: -60%;
+        background: conic-gradient(#ff5d5d, #5d8bff, #5dffa1, #ff5d5d);
+        animation: rot 4s linear infinite;
+      }
+      .box::after { content: ''; position: absolute; inset: 3px; border-radius: 10px; background: #18181b; }
+      .box > .content { position: relative; z-index: 1; color: #e4e4e7; font-size: 12px; }
+      @keyframes rot { to { transform: rotate(360deg); } }
+    </style>
+  </head>
+  <body>
+    <div class="box"><span class="content">::before 회전</span></div>
+    <script>
+      function postHeight() { const h = Math.ceil(document.body.getBoundingClientRect().height); parent.postMessage({ type: "demo:height", height: h }, "*"); }
+      addEventListener("load", postHeight); if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.body);
+    </script>
+  </body>
+</html>
