@@ -14,6 +14,8 @@ interface SideToc {
 
 export default function SideToc({ tocData }: SideToc) {
   const [scrollIdx, setScrollIdx] = useState<number>(0);
+  const [fits, setFits] = useState<boolean>(true);
+  const rootRef = useRef<HTMLDivElement>(null);
   const prevScrollIdx = useRef<number>(0);
   const filteredTocData = useMemo(() => {
     return tocData.filter((el) => el.depth !== 3);
@@ -82,12 +84,35 @@ export default function SideToc({ tocData }: SideToc) {
     };
   }, [filteredTocData]);
 
+  // TOC가 실제로 뷰포트 안에 들어가는지 측정 → 넘치면 숨긴다(확대/리사이즈 대응).
+  // 브레이크포인트 추측 대신 실제 오른쪽 끝을 재므로 제목 길이·폭 변화에 자동 대응.
+  useEffect(() => {
+    const measureFit = () => {
+      const el = rootRef.current;
+      if (!el) return;
+      const rect = el.getBoundingClientRect();
+      const MARGIN = 8; // 여유
+      setFits(rect.right <= window.innerWidth - MARGIN);
+    };
+    measureFit();
+    window.addEventListener("resize", measureFit);
+    // 본문 높이/레이아웃 변화 시에도 재측정
+    const ro = new ResizeObserver(measureFit);
+    ro.observe(document.body);
+    return () => {
+      window.removeEventListener("resize", measureFit);
+      ro.disconnect();
+    };
+  }, []);
+
   return (
     <div
+      ref={rootRef}
       className={cn(
         "sticky top-40 left-0 flex flex-col gap-1.5 text-sm text-muted-foreground pl-3 font-pretendard border-l-2 border-accent/30",
         "transition-all duration-400 ease-out opacity-100 pointer-events-auto",
         scrollIdx === 0 && "opacity-0 pointer-events-none",
+        !fits && "opacity-0 pointer-events-none",
       )}
     >
       {filteredTocData.map((toc, idx) => {
