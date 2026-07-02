@@ -119,6 +119,26 @@ export const getHeadingScrollTop = (el: Element): number =>
   Math.round(el.getBoundingClientRect().top + window.scrollY) -
   TOC_SCROLL_OFFSET;
 
+// 헤딩으로 부드럽게 스크롤한다. 데모 iframe이 로드되며 레이아웃이 밀려 목표가
+// 움직여도(비동기 높이) 안정될 때까지 재조준한다 — 첫 클릭도 정확히 안착.
+export const smoothScrollToHeading = (el: Element): void => {
+  const go = () =>
+    window.scrollTo({ top: getHeadingScrollTop(el), behavior: "smooth" });
+
+  go(); // 즉시 출발
+  if (typeof ResizeObserver === "undefined") return;
+
+  // body 크기가 바뀔 때마다(데모 로드 등) 목표를 다시 잡아 재스크롤.
+  let settle: ReturnType<typeof setTimeout>;
+  const ro = new ResizeObserver(() => {
+    go();
+    clearTimeout(settle);
+    settle = setTimeout(() => ro.disconnect(), 400); // 400ms 무변화 → 안정
+  });
+  ro.observe(document.body);
+  setTimeout(() => ro.disconnect(), 2000); // 안전장치: 최대 2초
+};
+
 export const textToId = (text: string) => {
   return (
     text
