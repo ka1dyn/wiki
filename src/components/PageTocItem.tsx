@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, textToId, TOC_SCROLL_OFFSET } from "@/lib/utils";
+import { cn, getHeadingScrollTop, textToId } from "@/lib/utils";
 import Link from "next/link";
 
 interface PageTocItemProps {
@@ -24,13 +24,8 @@ export default function PageTocItem({
     // Disable basic link operation
     e.preventDefault();
 
-    // document 기준 위치 - 헤더 오프셋 → 헤딩이 헤더 바로 아래에 온다
-    const top =
-      targetElement.getBoundingClientRect().top +
-      window.scrollY -
-      TOC_SCROLL_OFFSET;
-
-    window.scrollTo({ top, behavior: "smooth" });
+    // 헤딩이 헤더 바로 아래에 오도록 (하이라이트 breakpoint와 동일 공식)
+    window.scrollTo({ top: getHeadingScrollTop(targetElement), behavior: "smooth" });
   };
 
   return (

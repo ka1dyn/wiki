@@ -112,6 +112,13 @@ export const replaceSrc = (src: string) => {
 // 클릭 시 헤딩이 헤더 바로 아래에 오고, TOC 하이라이트도 같은 지점에서 활성화된다.
 export const TOC_SCROLL_OFFSET = 100;
 
+// 헤딩이 헤더 아래(TOC_SCROLL_OFFSET 지점)에 오도록 하는 문서 기준 스크롤 위치.
+// 정수로 반올림해 subpixel 오차를 제거한다 — 클릭 착지(scrollTo)와 하이라이트
+// breakpoint가 이 하나의 공식을 공유하므로, 별도 허용 오차(epsilon) 없이 일치한다.
+export const getHeadingScrollTop = (el: Element): number =>
+  Math.round(el.getBoundingClientRect().top + window.scrollY) -
+  TOC_SCROLL_OFFSET;
+
 export const textToId = (text: string) => {
   return (
     text
