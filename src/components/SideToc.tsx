@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import SideTocItem from "./SideTocItem";
-import { cn, textToId, TOC_SCROLL_OFFSET } from "@/lib/utils";
+import { cn, getHeadingScrollTop, textToId } from "@/lib/utils";
 
 interface SideToc {
   tocData: {
@@ -34,19 +34,19 @@ export default function SideToc({ tocData }: SideToc) {
           bp.push(bp.at(-1) ?? 0);
           return;
         }
-        // document 기준 위치 - 헤더 오프셋 (클릭 착지 지점과 동일 기준)
-        bp.push(
-          el.getBoundingClientRect().top + window.scrollY - TOC_SCROLL_OFFSET,
-        );
+        // 클릭 착지(SideTocItem)와 동일한 공식·반올림을 공유 → 오차 없이 일치
+        bp.push(getHeadingScrollTop(el));
       });
       breakPoint = bp;
       updateActive(); // 재측정 직후 현재 위치로 즉시 갱신
     };
 
     const getScrollIdx = (scroll: number) => {
+      // breakPoint는 정수(반올림)이므로 현재 스크롤도 정수로 맞춰 비교(subpixel 제거)
+      const y = Math.round(scroll);
       let ret = 0;
       breakPoint.forEach((point, idx) => {
-        if (scroll >= point) ret = idx;
+        if (y >= point) ret = idx;
       });
       return ret;
     };
