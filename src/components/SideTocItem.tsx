@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, textToId } from "@/lib/utils";
+import { cn, textToId, TOC_SCROLL_OFFSET } from "@/lib/utils";
 
 interface SideTocItemProps {
   depth: number;
@@ -23,13 +23,13 @@ export default function SideTocItem({
     // Disable basic link operation
     e.preventDefault();
 
-    const elementPosition = targetElement.offsetTop;
-    const finalPosition = elementPosition;
+    // document 기준 위치 - 헤더 오프셋 → 헤딩이 헤더 바로 아래에 온다
+    const top =
+      targetElement.getBoundingClientRect().top +
+      window.scrollY -
+      TOC_SCROLL_OFFSET;
 
-    window.scrollTo({
-      top: finalPosition + 30,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top, behavior: "smooth" });
   };
 
   return (
