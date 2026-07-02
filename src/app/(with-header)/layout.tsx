@@ -8,7 +8,7 @@ export default function Layout({
   return (
     <>
       <Header />
-      <div className="flex justify-center">{children}</div>
+      <div className="flex justify-center overflow-x-clip">{children}</div>
     </>
   );
 }

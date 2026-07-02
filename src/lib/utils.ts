@@ -108,6 +108,10 @@ export const replaceSrc = (src: string) => {
   return publicSrc;
 };
 
+// 헤딩 스크롤 기준 오프셋: sticky 헤더(h-20 = 80px) + 여유 20px.
+// 클릭 시 헤딩이 헤더 바로 아래에 오고, TOC 하이라이트도 같은 지점에서 활성화된다.
+export const TOC_SCROLL_OFFSET = 100;
+
 export const textToId = (text: string) => {
   return (
     text
