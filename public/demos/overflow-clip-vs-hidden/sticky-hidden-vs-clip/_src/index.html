@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>overflow: hidden vs clip · sticky 비교</title>
+    <style>
+      * { box-sizing: border-box; }
+      :root { color-scheme: dark; }
+      body {
+        margin: 0;
+        padding: 40px 24px;
+        background: #18181b;
+        font-family: system-ui, sans-serif;
+        color: #e4e4e7;
+      }
+
+      .grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 24px;
+        justify-content: center;
+      }
+      .col {
+        flex: 1 1 260px;
+        max-width: 340px;
+        min-width: 240px;
+      }
+      .col > .caption {
+        font-size: 13px;
+        margin: 0 0 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .caption code {
+        background: #27272a;
+        border-radius: 6px;
+        padding: 2px 7px;
+        font-size: 12px;
+      }
+      .bad { color: #fca5a5; }
+      .good { color: #86efac; }
+
+      /* 패널 = 세로 스크롤러. 이 안에서 스크롤이 일어난다. */
+      .panel {
+        height: 210px;
+        overflow-y: auto;
+        border: 1px solid #3f3f46;
+        border-radius: 10px;
+        background: #1f1f23;
+      }
+
+      /* 유일한 차이는 이 래퍼의 overflow-x 값 (아래 .is-hidden / .is-clip). */
+      .wrap { padding: 0 12px 12px; }
+      .is-hidden { overflow-x: hidden; } /* → 스크롤 컨테이너가 됨 → sticky 깨짐 */
+      .is-clip   { overflow-x: clip; }   /* → 스크롤 컨테이너 아님 → sticky 유지 */
+
+      .sticky {
+        position: sticky;
+        top: 0;
+        background: #8b5cf6;
+        color: #fff;
+        font-weight: 600;
+        font-size: 13px;
+        padding: 9px 12px;
+        margin: 0 -12px 12px;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+      }
+
+      .para {
+        font-size: 12.5px;
+        line-height: 1.7;
+        color: #a1a1aa;
+        margin: 0 0 12px;
+      }
+
+      /* 패널보다 넓은 막대 → 가로 넘침. hidden·clip 모두 스크롤바 없이 잘린다. */
+      .wide {
+        width: 620px;
+        height: 30px;
+        border-radius: 6px;
+        background: repeating-linear-gradient(
+          45deg,
+          #f59e0b 0 12px,
+          #b45309 12px 24px
+        );
+        display: flex;
+        align-items: center;
+        padding-left: 12px;
+        font-size: 12px;
+        color: #1c1917;
+        font-weight: 600;
+        margin-bottom: 12px;
+      }
+
+      .hint {
+        margin: 22px auto 0;
+        max-width: 720px;
+        font-size: 12.5px;
+        line-height: 1.7;
+        color: #71717a;
+        text-align: center;
+      }
+      .hint b { color: #a1a1aa; }
+    </style>
+  </head>
+  <body>
+    <div class="grid">
+      <!-- 왼쪽: overflow-x: hidden -->
+      <div class="col">
+        <p class="caption bad">
+          <code>overflow-x: hidden</code> sticky 깨짐 ✗
+        </p>
+        <div class="panel">
+          <div class="wrap is-hidden">
+            <div class="sticky">📌 sticky 헤더</div>
+            <div class="wide">← 패널보다 넓은 막대 (가로로 넘침)</div>
+            <p class="para">
+              아래로 스크롤해 보세요. 래퍼에 <code>overflow-x: hidden</code>을
+              주면 반대 축(y)이 <code>auto</code>로 계산되며 래퍼 자체가 새
+              스크롤 컨테이너가 됩니다.
+            </p>
+            <p class="para">
+              그 결과 헤더의 sticky 기준이 "바깥 패널"에서 "이 래퍼"로 바뀌는데,
+              래퍼는 스스로 스크롤되지 않으므로 헤더는 붙지 못하고 내용과 함께
+              위로 밀려 올라갑니다.
+            </p>
+            <p class="para">
+              스크롤을 계속 내리면 보라색 헤더가 화면 밖으로 사라지는 것을 볼 수
+              있습니다. 이것이 "hidden이 sticky를 깨뜨린다"의 실제 모습입니다.
+            </p>
+            <p class="para">
+              한편 위의 주황색 막대는 가로로 넘쳤지만 가로 스크롤바 없이 깔끔히
+              잘렸습니다. 넘침 제거라는 목적 자체는 달성됩니다.
+            </p>
+            <p class="para">더미 문단 · 더미 문단 · 더미 문단 · 더미 문단.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오른쪽: overflow-x: clip -->
+      <div class="col">
+        <p class="caption good">
+          <code>overflow-x: clip</code> sticky 유지 ✓
+        </p>
+        <div class="panel">
+          <div class="wrap is-clip">
+            <div class="sticky">📌 sticky 헤더</div>
+            <div class="wide">← 패널보다 넓은 막대 (가로로 넘침)</div>
+            <p class="para">
+              같은 구조지만 래퍼에 <code>overflow-x: clip</code>을 줬습니다.
+              <code>clip</code>은 "스크롤"이라는 개념이 없어 스크롤 컨테이너를
+              만들지 않습니다.
+            </p>
+            <p class="para">
+              따라서 헤더의 sticky 기준은 여전히 바깥 패널(실제 스크롤러)입니다.
+              스크롤을 내려도 보라색 헤더가 상단에 그대로 고정됩니다.
+            </p>
+            <p class="para">
+              동시에 넘친 주황색 막대는 왼쪽과 똑같이 스크롤바 없이 잘립니다.
+              즉 "넘침 제거 + sticky 유지"를 동시에 얻습니다.
+            </p>
+            <p class="para">
+              한 축만 <code>clip</code>이어도 반대 축은 <code>visible</code>로
+              유지되어 부작용이 없습니다(hidden은 auto로 바뀜).
+            </p>
+            <p class="para">더미 문단 · 더미 문단 · 더미 문단 · 더미 문단.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <p class="hint">
+      두 패널을 <b>아래로 스크롤</b>하며 비교해 보세요 — 왼쪽 헤더는 밀려
+      사라지고, 오른쪽 헤더는 상단에 붙어 있습니다. 넓은 막대는 양쪽 모두
+      가로 스크롤바 없이 잘립니다.
+    </p>
+
+    <script>
+      function postHeight() {
+        const h = Math.ceil(document.body.getBoundingClientRect().height);
+        parent.postMessage({ type: "demo:height", height: h }, "*");
+      }
+      addEventListener("load", postHeight);
+      if (window.ResizeObserver) new ResizeObserver(postHeight).observe(document.body);
+    </script>
+  </body>
+</html>
