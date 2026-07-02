@@ -56,7 +56,9 @@ export function DemoEmbed({
         // Next의 public 서빙은 디렉토리 경로를 index.html로 해석하지 않으므로 명시.
         src={`${DEMO_BASE}/${id}/index.html`}
         title={`demo: ${id}`}
-        loading="lazy"
+        // eager: 마운트 직후 전부 로드 → 높이 점프가 초기 로드로 몰려 정착.
+        // (lazy면 스크롤 도중 데모가 로드돼 TOC 클릭 착지가 밀림)
+        loading="eager"
         className="w-full rounded-md border border-sidebar-border bg-white"
         // box-sizing: content-box → height가 테두리에 먹히지 않고 콘텐츠 영역과
         // 정확히 일치(border-box면 테두리만큼 줄어 미세 내부 스크롤 발생).

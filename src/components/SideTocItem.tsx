@@ -1,6 +1,6 @@
 "use client";
 
-import { cn, getHeadingScrollTop, textToId } from "@/lib/utils";
+import { cn, smoothScrollToHeading, textToId } from "@/lib/utils";
 
 interface SideTocItemProps {
   depth: number;
@@ -23,8 +23,8 @@ export default function SideTocItem({
     // Disable basic link operation
     e.preventDefault();
 
-    // 헤딩이 헤더 바로 아래에 오도록 (하이라이트 breakpoint와 동일 공식)
-    window.scrollTo({ top: getHeadingScrollTop(targetElement), behavior: "smooth" });
+    // 헤딩으로 스크롤 (데모 로드로 목표가 밀려도 안정될 때까지 재조준)
+    smoothScrollToHeading(targetElement);
   };
 
   return (
