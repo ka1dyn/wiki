@@ -10,7 +10,7 @@ if (!existsSync(dir)) {
   mkdirSync(dir, { recursive: true });
 }
 
-const data = await fetchPosts("/llm-log");
+const data = await fetchPosts("/blog");
 const dailyData = await fetchPosts("/daily");
 writeFileSync(filePath, JSON.stringify(data, null, 2));
 writeFileSync(dailyFilePath, JSON.stringify(dailyData));
