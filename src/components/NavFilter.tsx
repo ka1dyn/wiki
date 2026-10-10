@@ -36,7 +36,7 @@ export default function NavFilter() {
           )}
           onClick={() => changePublish(false)}
         >
-          개인글
+          메모
         </div>
       </div>
 

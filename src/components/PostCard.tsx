@@ -73,7 +73,7 @@ const PostCard = forwardRef<HTMLAnchorElement, PostCardProps>(
               {description.slice(0, 90)}
             </p>
             <div className="absolute bottom-10 right-0">
-              <Category name={category} className="mb-2" />
+              <Category name={category} className="mb-2" disabled />
             </div>
 
             <div className="absolute bottom-0 w-full text-xs text-foreground flex justify-between">

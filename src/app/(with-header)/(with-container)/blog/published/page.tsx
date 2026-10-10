@@ -77,7 +77,7 @@ export default async function Page({
         <div className="flex flex-col gap-6 md:m-0">
           <div className="flex flex-col items-center md:items-start">
             <h1 className="text-3xl mb-2 font-semibold">
-              <span className="-translate-y-0.5">글 목록</span>
+              <span className="-translate-y-0.5">출판글</span>
             </h1>
             <p className="hidden text-foreground md:block">
               {isSeries ? (

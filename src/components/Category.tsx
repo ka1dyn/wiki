@@ -32,6 +32,9 @@ export default function Category({
     case "성능개선":
       fontColor = "#2b7db1";
       break;
+    case "추천":
+      fontColor = "#cd660c";
+      break;
 
     default:
       fontColor = "#3d3529";
@@ -42,14 +45,14 @@ export default function Category({
   return (
     <div
       className={cn(
-        "px-2 py-1 bolder text-xs rounded-md w-fit border transition-all duration-300 ease-out",
-        accent ? "font-semibold" : "font-normal",
+        "px-2 py-1 bolder text-[13px] rounded-md w-fit border transition-all duration-300 ease-out",
+        accent ? "font-bold" : "font-semibold",
         className,
       )}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
       style={{
-        borderColor: `${fontColor}55`,
+        borderColor: `${fontColor}77`,
         backgroundColor: accent ? `${fontColor}aa` : "",
       }}
     >
