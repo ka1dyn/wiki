@@ -7,7 +7,7 @@ export default function Footer() {
       <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-10 relative z-10">
         <div className="flex flex-col items-center md:items-start gap-3">
           <h2 className="text-2xl font-bold text-[#f5f1e8] tracking-tight">
-            Dev Library
+            Kaidyn Wiki
           </h2>
           <p className="text-sm font-light">
             © {new Date().getFullYear()} ka1dyn. All rights reserved.

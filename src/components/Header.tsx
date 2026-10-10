@@ -26,14 +26,14 @@ export default function Header() {
             className="size-5 cursor-pointer"
             onClick={() => (open ? navClose() : navOpen())}
           />
-          <Link
+          {/* <Link
             className="-translate-y-px cursor-pointer font-semibold text-xl"
             href={"/"}
           >
-            Dev Library
-          </Link>
+            Kaidyn Wiki
+          </Link> */}
         </div>
-        <div className="translate-y-px items-center hidden sm:flex">
+        <div className="-translate-y-px items-center hidden sm:flex">
           <HeaderNavItem path={"/"}>Home</HeaderNavItem>
           <HeaderNavItem path={"/blog/published"}>Posts</HeaderNavItem>
           <HeaderNavItem path={"/blog/daily"}>Daily</HeaderNavItem>

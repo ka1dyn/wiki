@@ -36,7 +36,7 @@ export default function Page() {
             <div className="flex flex-col gap-8">
               <div className="flex flex-col gap-3">
                 <h1 className="text-4xl font-bold tracking-tight text-[#f5f1e8]">
-                  Dev Library
+                  Kaidyn Wiki
                 </h1>
                 <p className="text-[#f5f1e8]/70 text-lg max-w-sm">
                   개발하며 배운 것들을 기록합니다
