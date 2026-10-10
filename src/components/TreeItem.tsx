@@ -11,6 +11,7 @@ import React, {
 import Leaf from "./Leaf";
 import Folder from "./Folder";
 import { useNavTriggerStore } from "@/stores";
+import TopFolder from "./TopFolder";
 
 export function TreeItem({
   tree,
@@ -29,6 +30,8 @@ export function TreeItem({
 
   const lastExpand = useRef(expand);
   const lastCollapse = useRef(collapse);
+
+  const isTop = depth == 1;
 
   useEffect(() => {
     if (expand !== lastExpand.current) {
@@ -86,19 +89,23 @@ export function TreeItem({
     setOpen(!open);
   };
 
+  let treeContent = null;
+
+  if (isLeaf) {
+    treeContent = (
+      <Leaf name={name} path={path} isPublish={isPublish || false} />
+    );
+  } else if (isTop) {
+    treeContent = <TopFolder name={name} count={count} />;
+  } else {
+    treeContent = (
+      <Folder name={name} count={count} open={open} nodeClick={nodeClick} />
+    );
+  }
+
   return (
-    <div className={cn("flex flex-col gap-0.5 mb-0.5 text-sm cursor-default")}>
-      {isLeaf ? (
-        <Leaf name={name} path={path} isPublish={isPublish || false} />
-      ) : (
-        <Folder
-          name={name}
-          count={count}
-          depth={depth}
-          open={open}
-          nodeClick={nodeClick}
-        />
-      )}
+    <div className={cn("flex flex-col gap-0.5 mb-1.5 text-sm cursor-default")}>
+      {treeContent}
 
       {!isLeaf && (
         <div
