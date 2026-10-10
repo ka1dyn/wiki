@@ -111,10 +111,9 @@ export function TreeItem({
         <div
           className={cn(
             "ml-2",
-            depth !== 1 &&
-              `relative before:content-[''] before:h-full before:w-0.5 before:absolute before:top-0 before:left-0 
+            `relative before:content-[''] before:h-full before:w-0.5 before:absolute before:top-0 before:left-0 
             before:bg-transparent group-hover:before:bg-secondary/50 before:translate-x-1.5`,
-            open ? "block" : "hidden",
+            open || isTop ? "block" : "hidden",
           )}
         >
           {SubTree}
