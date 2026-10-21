@@ -30,7 +30,7 @@ export default function Folder({ name, count, open, nodeClick }: FolderProps) {
         ) : (
           <FolderDefault className={cn("text-primary w-4 h-4 shrink-0")} />
         )}
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-3 items-center">
           <span className="font-medium">{name}</span>
           <span className="font-light text-xs">{count}편</span>
         </div>

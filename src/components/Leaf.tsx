@@ -34,7 +34,7 @@ export default function Leaf({ name, path, isPublish }: LeafProps) {
       <div className="ml-1 flex items-center gap-3">
         <Dot className="text-primary/50 w-5 h-5 shrink-0" />
         <div className="flex gap-2 items-center pr-2">
-          <span className="font-medium text-foreground/80 group-hover/leaf:text-foreground">
+          <span className="font-medium text-sm text-foreground/70 group-hover/leaf:text-foreground">
             {name}
           </span>
         </div>

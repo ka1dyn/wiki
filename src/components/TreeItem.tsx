@@ -96,7 +96,7 @@ export function TreeItem({
       <Leaf name={name} path={path} isPublish={isPublish || false} />
     );
   } else if (isTop) {
-    treeContent = <TopFolder name={name} count={count} />;
+    treeContent = <TopFolder name={name} />;
   } else {
     treeContent = (
       <Folder name={name} count={count} open={open} nodeClick={nodeClick} />
@@ -104,7 +104,12 @@ export function TreeItem({
   }
 
   return (
-    <div className={cn("flex flex-col gap-0.5 mb-1.5 text-sm cursor-default")}>
+    <div
+      className={cn(
+        "flex flex-col gap-0.5 mb-0.5 text-sm cursor-default",
+        isTop && "mb-3",
+      )}
+    >
       {treeContent}
 
       {!isLeaf && (
